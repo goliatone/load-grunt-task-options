@@ -10,8 +10,10 @@ The following is an example of a simple Grunt setup.
 
 There is a generic `Gruntfile` that loads all grunt tasks declared as dependencies in the `package.json` file.
 Next, it will load custom tasks located under the **tasks** directory. 
+
 Each custom task should be in a separated JavaScript file. As a convention the filename should match the task name declared within.
-Next, all task configuration options should be placed in their own JavaScript file inside the **tasks/options** directory.
+
+Next, all task configuration options should be placed in their own JavaScript file inside the **tasks/options** directory. The **filename must match** the task it references. For example, the `grunt-contrib-cssmin` expects a `cssmin` options object so its corresponding file should be named `cssmin.js`
 
 The structure project should look something like this:
 
@@ -24,7 +26,7 @@ The structure project should look something like this:
 │   ├── build.js
 │   ├── dist.js
 │   ├── options
-│   │   ├── copy.js
+│   │   ├── cssmin.js
 │   │   ├── ...
 │   │   ├── gconfig.js
 │   │   └── usemin.js
