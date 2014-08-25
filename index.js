@@ -10,7 +10,7 @@ var glob = require('glob');
  *
  * @param  {String} path Path to dir containing task option
  *                       files
- * @return {Object}      Grunt config object.
+ * @return {Object}      Object containing merged files.
  */
 module.exports = function loadConfig(path) {
  	var object = {},
