@@ -1,8 +1,8 @@
 'use strict';
 
 var glob = require('glob'),
-	extend = require('extend'),
-	path = require('path');
+    extend = require('extend'),
+    path = require('path');
 
 /**
  * Loads all files from specified directory
@@ -14,36 +14,46 @@ var glob = require('glob'),
  *                       files
  * @return {Object}      Object containing merged files.
  */
-var loader = module.exports = function (target, options) {
- 	var object = {},
- 		filepath,
-    	key;
+var loader = module.exports = function(target, options) {
 
-    options = options || {};
+    var parent = sanitize(target, '/../');
 
-    target = _sanitize(target);
+    var defaults = findTasks(parent);
 
-  	glob.sync('*', {cwd: target}).forEach(function(option) {
-    	key = option.replace(/\.js$/,'');
-    	filepath = path.join(target, option);
-    	object[key] = require(filepath);
-  	});
+    var object = findTasks(target);
 
-  	extend(true, options, object);
+    options = extend(true, defaults, options, object);
 
-  	return options;
+    return options;
 };
 
-loader.loadNpmTasks = function(grunt){
-	var target = path.resolve(process.cwd() + '/../','package.json');
-  	require('matchdep').filterDev('grunt-*', target).forEach(grunt.loadNpmTasks);
-};
+function findTasks(target) {
+    var object = {},
+        filepath,
+        key;
+    target = sanitize(target);
 
-function _sanitize(src){
-	if(!src) throw new Error('')
-	var cwd = process.cwd();
-	src = path.normalize(src);
-	src = path.resolve(cwd, src);
+    glob.sync('*', {
+        cwd: target
+    }).forEach(function(option) {
+        key = option.replace(/\.js$/, '');
+        filepath = path.join(target, option);
+        object[key] = require(filepath);
+    });
 
-	return src;
+    return object;
 }
+
+function sanitize(src, append) {
+    if (!src) throw new Error('Invalid path');
+    var cwd = process.cwd() + (append || '');
+    src = path.normalize(src);
+    src = path.resolve(cwd, src);
+
+    return src;
+}
+
+loader.loadNpmTasks = function(grunt) {
+    var target = path.resolve(process.cwd() + '/../', 'package.json');
+    require('matchdep').filterDev('grunt-*', target).forEach(grunt.loadNpmTasks);
+};
