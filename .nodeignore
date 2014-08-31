@@ -1,8 +1,0 @@
-.gitignore
-.npmignore
-.jshitrc
-.travis.yml
-
-test/
-
-README.md
