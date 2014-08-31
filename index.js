@@ -1,6 +1,7 @@
 'use strict';
 
 var glob = require('glob'),
+	extend = require('extend'),
 	path = require('path');
 
 /**
@@ -13,10 +14,12 @@ var glob = require('glob'),
  *                       files
  * @return {Object}      Object containing merged files.
  */
-module.exports = function loadConfig(target) {
+var loader = module.exports = function (target, options) {
  	var object = {},
  		filepath,
     	key;
+
+    options = options || {};
 
     target = _sanitize(target);
 
@@ -26,7 +29,14 @@ module.exports = function loadConfig(target) {
     	object[key] = require(filepath);
   	});
 
-  	return object;
+  	extend(true, options, object);
+
+  	return options;
+};
+
+loader.loadNpmTasks = function(grunt){
+	var target = path.resolve(process.cwd() + '/../','package.json');
+  	require('matchdep').filterDev('grunt-*', target).forEach(grunt.loadNpmTasks);
 };
 
 function _sanitize(src){
